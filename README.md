@@ -1,3 +1,17 @@
+<p align="center">
+<a href="https://www.linkedin.com/in/soriamaximilianorodrigo/" target="_blank" rel="noopener noreferrer">
+<img width="100%" height="100%" src="docs/img/banner.gif" alt="genai-cloud-architecture"></a>
+</p>
+
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Cloud-AWS_%7C_GCP-FF9900?logo=amazonaws&logoColor=white" alt="Cloud"></a>
+  <a href="#"><img src="https://img.shields.io/badge/IaC-Terraform-7B42BC?logo=terraform&logoColor=white" alt="Terraform"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Arquitectura-Multi--tenant-0F6E56" alt="Multi-tenant"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Diagramas-draw.io-F08705" alt="draw.io"></a>
+</p>
+
+---
+
 # genai-cloud-architecture
 
 **Diagrama de arquitectura cloud** escalable y **multi-tenant** para servir modelos LLM (AWS o GCP), acompañado de una **implementación mínima de referencia** que materializa las decisiones clave.
