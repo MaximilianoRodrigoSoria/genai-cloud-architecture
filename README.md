@@ -104,7 +104,3 @@ genai-cloud-architecture/
 - [ ] **Gestión de secretos** y red privada.
 - [ ] **Observabilidad y atribución de costos** por tenant (enlaza con `llmops-observability`).
 - [ ] **Guardrails** (input/output) y auditoría.
-
-## Criterios de "terminado"
-
-Existe un diagrama claro y defendible de una plataforma GenAI multi-tenant, respaldado por ADRs con trade-offs explícitos, y una implementación mínima que demuestra al menos **aislamiento por tenant + rate limiting + caching semántico**. El diseño integra conceptualmente los otros proyectos del portfolio.
