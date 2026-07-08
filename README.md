@@ -4,10 +4,10 @@
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/Cloud-AWS_%7C_GCP-FF9900?logo=amazonaws&logoColor=white" alt="Cloud"></a>
-  <a href="#"><img src="https://img.shields.io/badge/IaC-Terraform-7B42BC?logo=terraform&logoColor=white" alt="Terraform"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Arquitectura-Multi--tenant-14B8A6" alt="Multi-tenant"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Diagramas-Mermaid-22D3EE" alt="Mermaid"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Cloud-AWS_%7C_GCP-FF9900?logo=amazonaws&logoColor=white&style=flat-square" alt="Cloud"></a>
+  <a href="#"><img src="https://img.shields.io/badge/IaC-Terraform-7B42BC?logo=terraform&logoColor=white&style=flat-square" alt="Terraform"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Arquitectura-Multi--tenant-14B8A6?style=flat-square" alt="Multi-tenant"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Diagramas-Mermaid-22D3EE?style=flat-square" alt="Mermaid"></a>
 </p>
 
 <p align="center">
