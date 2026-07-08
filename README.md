@@ -6,15 +6,28 @@
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/Cloud-AWS_%7C_GCP-FF9900?logo=amazonaws&logoColor=white" alt="Cloud"></a>
   <a href="#"><img src="https://img.shields.io/badge/IaC-Terraform-7B42BC?logo=terraform&logoColor=white" alt="Terraform"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Arquitectura-Multi--tenant-0F6E56" alt="Multi-tenant"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Diagramas-draw.io-F08705" alt="draw.io"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Arquitectura-Multi--tenant-14B8A6" alt="Multi-tenant"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Diagramas-Mermaid-22D3EE" alt="Mermaid"></a>
 </p>
 
----
+<p align="center">
+  <a href="https://github.com/DietrichGebert/ponytail"><img src="https://img.shields.io/badge/built_with-ponytail-111111?style=flat-square" alt="ponytail"></a>
+  <img src="https://img.shields.io/badge/layout-src%2Fpackage-14B8A6?style=flat-square" alt="src layout">
+  <img src="https://img.shields.io/badge/license-MIT-success?style=flat-square" alt="MIT">
+</p>
 
-# genai-cloud-architecture
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=1DE9B6&center=true&vCenter=true&width=820&lines=Arquitectura+GenAI+cloud%2C+escalable+y+multi-tenant;aislamiento+por+tenant+%C2%B7+rate+limit+%C2%B7+caching+sem%C3%A1ntico;AWS%2FGCP+%2B+Terraform+%2B+gateway+de+referencia" alt="typing SVG">
+</p>
 
-**Diagrama de arquitectura cloud** escalable y **multi-tenant** para servir modelos LLM (AWS o GCP), acompañado de una **implementación mínima de referencia** que materializa las decisiones clave.
+<hr/>
+
+<h1 align="center">genai-cloud-architecture</h1>
+
+<p align="center">
+<b>Arquitectura cloud</b> escalable y <b>multi-tenant</b> para servir modelos LLM (AWS o GCP),
+con ADRs, diagrama e implementación mínima de referencia.
+</p>
 
 ## Objetivo
 
@@ -91,39 +104,6 @@ genai-cloud-architecture/
 - [ ] **Gestión de secretos** y red privada.
 - [ ] **Observabilidad y atribución de costos** por tenant (enlaza con `llmops-observability`).
 - [ ] **Guardrails** (input/output) y auditoría.
-
-## Checklist de implementación
-
-### Fase 1 — Diseño
-
-- [ ] Elegir proveedor (AWS o GCP) y justificarlo en un ADR.
-- [ ] Redactar `architecture.md` con el diseño y los trade-offs de cada decisión.
-- [ ] Definir el modelo de multi-tenancy (silo vs pool vs híbrido) en `multi-tenancy.md`.
-
-### Fase 2 — Diagrama
-
-- [ ] Construir el diagrama principal en draw.io con todos los componentes de la lista.
-- [ ] Exportar a PNG e incrustarlo en el README/architecture.md.
-- [ ] (Opcional) Versionar el diagrama como código con la librería `diagrams`.
-
-### Fase 3 — ADRs (decisiones de arquitectura)
-
-- [ ] ADR: elección de proveedor.
-- [ ] ADR: serving de inferencia (gestionado vs self-hosted; batching).
-- [ ] ADR: estrategia de aislamiento de tenants (datos, cuotas, costos).
-
-### Fase 4 — Implementación mínima de referencia
-
-- [ ] Terraform que despliegue un subconjunto realista (gateway + un servicio de inferencia).
-- [ ] Gateway con **auth por tenant** y **rate limiting/cuotas** por `tenant_id`.
-- [ ] Endpoint de inferencia con **caching semántico** demostrable.
-- [ ] Atribución de costo por tenant (etiqueta cada request con su `tenant_id`).
-
-### Fase 5 — Documentación
-
-- [ ] README con el diagrama, el resumen de decisiones y cómo desplegar la implementación mínima.
-- [ ] Sección de "cómo escalaría esto en producción" (límites conocidos y siguientes pasos).
-- [ ] Enlazar explícitamente con los otros 4 proyectos del portfolio (dónde encaja cada uno).
 
 ## Criterios de "terminado"
 
