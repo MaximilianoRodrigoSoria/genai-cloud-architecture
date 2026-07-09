@@ -1,16 +1,37 @@
-# ADR 0003 — Estrategia de aislamiento de tenants
+# ADR 0003 — Aislamiento y cuotas por tenant
 
-## Estado
-Aceptada.
+- Estado: aceptada
+- Fecha: 2026-07-09
 
 ## Contexto
-Distintos tenants tienen distintos requisitos de aislamiento y compliance.
+
+La plataforma sirve a múltiples clientes sobre infraestructura compartida. Hay que
+aislar datos, tráfico y costos, y evitar que un tenant afecte a otro (ruido,
+abuso, fuga de datos), balanceando costo vs aislamiento.
 
 ## Decisión
-Modelo **híbrido**: pool con partición lógica por `tenant_id` por defecto; silo
-(recursos dedicados) para tenants que lo requieran. Rate limiting, cuotas y
-atribución de costo **por tenant** en el gateway.
+
+- **Modelo:** **pool** por defecto (aislamiento lógico por `tenant_id`), con
+  opción de **silo** (recursos dedicados) para tenants premium/regulados.
+- **Datos:** namespace por tenant en el vector store; partition key `tenant_id` en
+  DynamoDB (con IAM `LeadingKeys`); prefijo por tenant en S3.
+- **Tráfico:** rate limiting por tenant (token bucket) + cuotas de tokens/costo por
+  tier. Exceso → `429` o degradación a modelo barato.
+- **Costo:** atribución por `tenant_id` para facturar por uso y detectar abuso.
+
+## Alternativas evaluadas
+
+- **Silo para todos:** máximo aislamiento pero costo y ops que no escalan a muchos
+  tenants chicos. Rechazada como default; disponible como tier premium.
+- **Pool sin límites por tenant:** rechazada — un tenant ruidoso degrada a todos y
+  el gasto se vuelve impredecible.
+- **Aislamiento solo a nivel app (sin IAM):** rechazada — un bug de aplicación
+  podría cruzar tenants; se refuerza con políticas IAM por `LeadingKeys`.
 
 ## Consecuencias
-- (+) Eficiencia de costo para la mayoría, aislamiento fuerte para quien lo necesite.
-- (−) Dos caminos de despliegue a mantener (pool y silo).
+
+- (+) Costo eficiente y escalable para el grueso de tenants.
+- (+) Blast radius acotado por límites y particionado; defensa en profundidad (app + IAM).
+- (−) El pool tiene mayor blast radius que el silo; se ofrece silo donde el riesgo lo justifica.
+- (−) Complejidad de cuotas y de la lógica de degradación; la `reference-impl/gateway/`
+  implementa auth por tenant, rate limit y cuotas por tier.

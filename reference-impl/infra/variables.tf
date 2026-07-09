@@ -1,9 +1,23 @@
 variable "region" {
-  type    = string
-  default = "us-east-1"
+  description = "Región de AWS"
+  type        = string
+  default     = "us-east-1"
 }
 
-variable "env" {
-  type    = string
-  default = "dev"
+variable "project" {
+  description = "Nombre del proyecto (prefijo de recursos)"
+  type        = string
+  default     = "genai-platform"
+}
+
+variable "environment" {
+  description = "Entorno (dev/stage/prod)"
+  type        = string
+  default     = "dev"
+}
+
+variable "tenant_ids" {
+  description = "Tenants a aprovisionar (namespaces/particiones lógicas)"
+  type        = list(string)
+  default     = ["t-free", "t-pro", "t-ent"]
 }

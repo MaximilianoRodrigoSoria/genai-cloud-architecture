@@ -1,16 +1,23 @@
+"""Tests del token bucket (reloj inyectado, sin sleep)."""
+
 from __future__ import annotations
 
-from gateway.ratelimit import RateLimiter
+from gateway.ratelimit import TokenBucket
 
 
-def test_corta_al_exceder():
-    rl = RateLimiter(limit_per_minute=3)
-    assert all(rl.allow("acme", now=1000.0 + i) for i in range(3))
-    assert rl.allow("acme", now=1003.0) is False
+def test_permite_la_rafaga_y_luego_bloquea():
+    now = [0.0]
+    bucket = TokenBucket(rate=1.0, capacity=3, clock=lambda: now[0])
+    assert bucket.allow() and bucket.allow() and bucket.allow()
+    assert not bucket.allow()  # agotó la capacidad
 
 
-def test_aisla_por_tenant():
-    rl = RateLimiter(limit_per_minute=1)
-    assert rl.allow("acme", now=0)
-    assert rl.allow("globex", now=0)   # otro tenant no se ve afectado
-    assert rl.allow("acme", now=1) is False
+def test_recarga_con_el_tiempo():
+    now = [0.0]
+    bucket = TokenBucket(rate=1.0, capacity=3, clock=lambda: now[0])
+    for _ in range(3):
+        bucket.allow()
+    assert not bucket.allow()
+    now[0] = 1.0  # pasó 1s → +1 token a rate=1/s
+    assert bucket.allow()
+    assert not bucket.allow()

@@ -29,9 +29,9 @@
 con ADRs, diagrama e implementación mínima de referencia.
 </p>
 
-## Objetivo
+## ¿Qué resuelve este proyecto?
 
-Cerrar el portfolio con la mirada de arquitecto: cómo se lleva un sistema GenAI de un notebook a una plataforma que sirve a múltiples clientes (tenants) de forma escalable, segura y con costos bajo control. El entregable central es un **diagrama de arquitectura** bien razonado, sostenido por un conjunto de decisiones documentadas (trade-offs), más una **implementación mínima** que demuestra que el diseño es realizable, no solo un dibujo.
+Cierra el portfolio con la mirada de arquitecto: cómo se lleva un sistema GenAI de un notebook a una plataforma que sirve a múltiples clientes (tenants) de forma escalable, segura y con costos bajo control. El entregable central es un **diagrama de arquitectura** bien razonado, sostenido por un conjunto de decisiones documentadas (trade-offs), más una **implementación mínima** que demuestra que el diseño es realizable, no solo un dibujo.
 
 Preguntas que la arquitectura debe responder:
 
@@ -41,7 +41,27 @@ Preguntas que la arquitectura debe responder:
 - **Costos** — caching semántico, ruteo de modelos (barato vs caro según la tarea), observabilidad de gasto por tenant.
 - **Gobernanza** — versionado de prompts/modelos, guardrails, auditoría.
 
-## Stack tecnológico sugerido
+## ¿Qué pasos sigue?
+
+Cada request atraviesa el gateway en este orden: **autenticación por tenant → rate limit y cuota → cache semántico → ruteo de modelo (barato vs caro) → orquestación RAG e inferencia → atribución de costo y respuesta**. El diagrama completo de la plataforma está en [`docs/architecture.md`](docs/architecture.md).
+
+## Qué hace cada parte
+
+| Pieza | Rol |
+|---|---|
+| **API Gateway + WAF** | Ingreso protegido; authorizer Cognito con `tenant_id`. |
+| **Gateway** | Rate limit, cuotas y ruteo de modelos por tenant. |
+| **Cache semántico** | Evita pagar inferencia por preguntas repetidas o similares. |
+| **Ruteo de modelos** | Modelo barato para tareas simples, caro para las complejas. |
+| **Orquestación RAG** | Recupera del vector store (namespace por tenant) e invoca el modelo. |
+| **Datos por tenant** | DynamoDB / S3 / OpenSearch particionados por `tenant_id`. |
+| **Observabilidad** | Costo, latencia y errores por tenant (capa `llmops-observability`). |
+
+## Por qué es bueno tenerlo
+
+Muestra cómo llevar un GenAI de notebook a plataforma multi-tenant sin que exploten el costo ni el aislamiento. No es solo un dibujo: las decisiones quedan documentadas como **ADRs con trade-offs**, y el diseño se respalda con un **gateway corrible y testeado** (`reference-impl/gateway/`) más un esqueleto Terraform, que prueban que es realizable.
+
+## Stack tecnológico
 
 Elegir **un** proveedor y ser coherente. Dos rutas de referencia:
 
@@ -66,30 +86,29 @@ Elegir **un** proveedor y ser coherente. Dos rutas de referencia:
 **Infra como código:** Terraform (recomendado, portable) o CDK/Pulumi.
 **Diagramas:** `draw.io` / diagrams.net, o `diagrams` (Python, "diagram as code") para versionar el diagrama junto al código.
 
-## Estructura de carpetas propuesta
+## Estructura de carpetas
 
 ```
 genai-cloud-architecture/
 ├── README.md
+├── AGENTS.md                        # Ruleset ponytail (código mínimo)
 ├── docs/
-│   ├── architecture.md          # Documento principal: decisiones y trade-offs
-│   ├── diagrams/
-│   │   ├── architecture.drawio  # Diagrama editable
-│   │   ├── architecture.png     # Export para el README
-│   │   └── diagram.py           # (Opcional) diagram-as-code con `diagrams`
-│   ├── multi-tenancy.md         # Estrategia de aislamiento y cuotas por tenant
+│   ├── architecture.md             # Documento principal: diagrama Mermaid + trade-offs
+│   ├── multi-tenancy.md            # Estrategia de aislamiento y cuotas por tenant
 │   └── adr/
 │       ├── 0001-provider-choice.md
 │       ├── 0002-inference-serving.md
 │       └── 0003-tenant-isolation.md
-├── reference-impl/              # Implementación mínima de referencia
-│   ├── infra/                   # Terraform (o CDK) del subconjunto desplegable
-│   ├── gateway/                 # API con auth + rate limiting por tenant
-│   └── inference/               # Endpoint de inferencia con caching semántico
-└── diagrams-src/                # Fuentes auxiliares de diagramas
+└── reference-impl/                 # Implementación mínima de referencia
+    ├── gateway/                    # Gateway FastAPI corrible + tests (offline)
+    │   ├── gateway/               # auth · ratelimit · cache · router · inference · app
+    │   └── tests/
+    └── infra/                     # Terraform skeleton (DynamoDB, S3, SQS, Cognito, Secrets)
 ```
 
-## Componentes del diagrama (checklist de contenido)
+## Componentes del diagrama
+
+Cubiertos en el diagrama de [`docs/architecture.md`](docs/architecture.md):
 
 - [ ] **Ingreso:** API Gateway / Load Balancer con WAF.
 - [ ] **AuthN/AuthZ:** identidad por tenant (claims con `tenant_id`).

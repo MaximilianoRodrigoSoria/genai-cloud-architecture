@@ -1,9 +1,0 @@
-[
-  "tests/test_auth.py::test_key_invalida",
-  "tests/test_auth.py::test_key_valida",
-  "tests/test_cache.py::test_aisla_por_tenant",
-  "tests/test_cache.py::test_expira_por_ttl",
-  "tests/test_cache.py::test_hit_y_normalizacion",
-  "tests/test_ratelimit.py::test_aisla_por_tenant",
-  "tests/test_ratelimit.py::test_corta_al_exceder"
-]
