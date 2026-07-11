@@ -1,5 +1,5 @@
 # Gateway de referencia. Instalar:  python -m pip install --user -r requirements.txt
-fastapi>=0.111
+fastapi>=0.139.0
 uvicorn[standard]>=0.30
 # tests
 pytest>=8.2
