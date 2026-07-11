@@ -20,6 +20,16 @@
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=1DE9B6&center=true&vCenter=true&width=820&lines=Arquitectura+GenAI+cloud%2C+escalable+y+multi-tenant;aislamiento+por+tenant+%C2%B7+rate+limit+%C2%B7+caching+sem%C3%A1ntico;AWS%2FGCP+%2B+Terraform+%2B+gateway+de+referencia" alt="typing SVG">
 </p>
 
+<!-- dynamic-badges -->
+<p align="center">
+  <a href="https://github.com/MaximilianoRodrigoSoria/genai-cloud-architecture/actions"><img src="https://img.shields.io/github/actions/workflow/status/MaximilianoRodrigoSoria/genai-cloud-architecture/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI&labelColor=1A1C1F&color=06C69C" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/MaximilianoRodrigoSoria/genai-cloud-architecture?style=flat-square&labelColor=1A1C1F&color=06C69C" alt="License"></a>
+  <img src="https://img.shields.io/github/last-commit/MaximilianoRodrigoSoria/genai-cloud-architecture?style=flat-square&labelColor=1A1C1F&color=06C69C" alt="Last commit">
+  <img src="https://img.shields.io/github/repo-size/MaximilianoRodrigoSoria/genai-cloud-architecture?style=flat-square&labelColor=1A1C1F&color=06C69C" alt="Repo size">
+  <a href="https://maximilianorodrigosoria.github.io/genai-cloud-architecture/"><img src="https://img.shields.io/badge/GitHub_Pages-online-02ECB6?style=flat-square&logo=githubpages&logoColor=white&labelColor=1A1C1F" alt="Pages"></a>
+  <img src="https://img.shields.io/badge/Python-3.12-06C69C?style=flat-square&logo=python&logoColor=white&labelColor=1A1C1F" alt="Python">
+</p>
+
 <hr/>
 
 <h1 align="center">genai-cloud-architecture</h1>
@@ -123,3 +133,35 @@ Cubiertos en el diagrama de [`docs/architecture.md`](docs/architecture.md):
 - [ ] **Gestión de secretos** y red privada.
 - [ ] **Observabilidad y atribución de costos** por tenant (enlaza con `llmops-observability`).
 - [ ] **Guardrails** (input/output) y auditoría.
+
+---
+
+<!-- diagrama-mermaid -->
+## 📊 Diagrama de la plataforma
+
+```mermaid
+flowchart TB
+    client["Cliente / app del tenant"] --> waf["WAF + API Gateway"]
+    waf --> authz["Authorizer<br/>Cognito · claims con tenant_id"]
+    authz --> gw["Gateway<br/>rate limit · cuotas · ruteo"]
+    gw --> cache{"Cache semantico<br/>hit?"}
+    cache -- "hit" --> resp["Respuesta + costo atribuido"]
+    cache -- "miss" --> router["Ruteo de modelo<br/>barato vs caro"]
+    router --> small["Bedrock Haiku<br/>tareas simples"]
+    router --> big["Bedrock / SageMaker<br/>tareas complejas"]
+    small --> rag["Orquestacion RAG + tools"]
+    big --> rag
+    rag --> vect["Vector store<br/>OpenSearch · namespace por tenant"]
+    rag --> data["Datos por tenant<br/>DynamoDB · S3 con prefijo"]
+    rag --> resp
+    gw -.async.-> queue["SQS<br/>ingesta · batch de embeddings"]
+    queue --> worker["Worker de ingesta<br/>ECS/Fargate"]
+    worker --> vect
+    resp --> obs["Observabilidad<br/>CloudWatch + llmops-observability"]
+    subgraph seg["Transversal"]
+        secrets["Secrets Manager"]
+        guard["Guardrails in/out + auditoria"]
+    end
+    gw --- guard
+    small --- secrets
+```
